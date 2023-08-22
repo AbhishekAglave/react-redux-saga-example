@@ -1,23 +1,61 @@
-import logo from './logo.svg';
 import './App.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { setShowBackBtn, setTitle } from './redux/actions/headerActions.js';
+import { getTodos } from './redux/actions/todoActions';
 
 function App() {
+  const dispatch = useDispatch();
+  const headerData = useSelector((state) => state.headerReducer);
+  const todoData = useSelector((state) => state.todoReducer);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>
+        {headerData.ShowBackBtn && '<-\t\t'}
+        {headerData.Title}
+      </h1>
+      <button
+        onClick={(event) => {
+          dispatch(setTitle('Home Page'));
+          dispatch(setShowBackBtn(false));
+        }}
+      >
+        Home
+      </button>
+      <button
+        onClick={(event) => {
+          dispatch(setTitle('Page One'));
+          dispatch(setShowBackBtn(true));
+        }}
+      >
+        Page 1
+      </button>
+      <button
+        onClick={(event) => {
+          dispatch(setTitle('Page Two'));
+          dispatch(setShowBackBtn(true));
+        }}
+      >
+        Page 2
+      </button>
+      <br />
+      <button
+        onClick={(event) => {
+          dispatch(getTodos());
+        }}
+      >
+        {todoData.isLoading ? 'Loading...' : 'Fetch Todo Data'}
+      </button>
+
+      {todoData.data.map((item) => {
+        return (
+          <div key={item.id}>
+            <h3>{item.title}</h3>
+            <p>
+              {item.completed ? <i>{'Completed'}</i> : <i>{'Not Completed'}</i>}
+            </p>
+          </div>
+        );
+      })}
     </div>
   );
 }
